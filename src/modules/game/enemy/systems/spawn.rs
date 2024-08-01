@@ -10,8 +10,8 @@ use crate::modules::game::{
     spell::components::{SpellCaster, SpellCasterCooldown},
 };
 
-pub fn spawn_enemy(commands: &mut Commands, transform: Transform) {
-    let entity = commands
+pub fn spawn_enemy(commands: &mut ChildBuilder, transform: Transform) {
+    commands
         .spawn((
             SpriteBundle {
                 sprite: Sprite {
@@ -32,16 +32,11 @@ pub fn spawn_enemy(commands: &mut Commands, transform: Transform) {
             Velocity::zero(),
             Ccd::enabled(),
             Name::new("Enemy"),
-        ))
-        .id();
-
-    let collider = commands
-        .spawn((
-            Collider::cuboid(8., 8.),
-            ActiveEvents::COLLISION_EVENTS,
-            TransformBundle::from_transform(Transform::from_translation(Vec3::new(0., 0., 0.))),
-        ))
-        .id();
-
-    commands.entity(entity).push_children(&[collider]);
+        )).with_children(|parent| {
+            parent.spawn((
+                Collider::cuboid(8., 8.),
+                ActiveEvents::COLLISION_EVENTS,
+                TransformBundle::from_transform(Transform::from_translation(Vec3::new(0., 0., 0.))),
+            ));
+        });
 }

@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 use components::SpellCasterCooldown;
 use systems::{
-    movement::{handle_collisions, spell_movement, update_floating_text},
-    spell_caster::spell_caster,
+    collisions::handle_collisions, movement::{despawn_spells, spell_movement, update_floating_text}, spell_caster::spell_caster
 };
 
 pub mod components;
@@ -17,6 +16,7 @@ impl Plugin for SpellPlugin {
             (
                 spell_caster,
                 spell_movement,
+                despawn_spells,
                 handle_collisions,
                 update_floating_text,
             ),

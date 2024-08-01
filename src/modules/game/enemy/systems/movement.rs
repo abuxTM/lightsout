@@ -4,7 +4,7 @@ use bevy_rapier2d::dynamics::Velocity;
 use crate::modules::game::{
     components::Health,
     enemy::components::{Enemy, EnemySpeed},
-    player::components::Player,
+    player::components::{Player, PlayerLevel},
 };
 
 pub fn enemy_movement(
@@ -30,10 +30,17 @@ pub fn enemy_movement(
     }
 }
 
-pub fn kill_enemy(mut commands: Commands, enemies: Query<(Entity, &Health), With<Enemy>>) {
+pub fn kill_enemy(
+    mut commands: Commands,
+    enemies: Query<(Entity, &Health), With<Enemy>>,
+    mut player_query: Query<&mut PlayerLevel, With<Player>>
+) {
     for (entity, health) in enemies.iter() {
-        if health.0 <= 0 {
-            commands.entity(entity).despawn_recursive();
+        if let Ok(mut player_level) = player_query.get_single_mut() {
+            if health.0 <= 0 {
+                commands.entity(entity).despawn_recursive();
+                player_level.xp += 10;
+            }
         }
     }
 }

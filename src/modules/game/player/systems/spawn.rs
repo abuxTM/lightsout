@@ -2,8 +2,7 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use crate::modules::game::{
-    player::components::*,
-    spell::components::{SpellCaster, SpellCasterCooldown},
+    components::{EntityClass, EntityClasses}, player::components::*, spell::components::{Spell, SpellBook, SpellCaster, SpellCasterCooldown}
 };
 
 pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -19,6 +18,20 @@ pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
             },
             Player,
             PlayerSpeed { value: 80. },
+            PlayerLevel {
+                level: 0,
+                xp_to_level_up: 0,
+                xp: 0,
+            },
+            EntityClass {
+                class: EntityClasses::Paladin
+            },
+            SpellBook {
+                spells: vec![
+                    "Fireball".to_string(),
+                    "Concentration".to_string(),
+                ]
+            },
             SpellCaster(true),
             SpellCasterCooldown(Timer::from_seconds(1., TimerMode::Repeating)),
             RigidBody::Dynamic,
@@ -28,6 +41,12 @@ pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
             Collider::capsule_y(15. / 3., 24. / 3.),
         ))
         .with_children(|parent| {
-            parent.spawn(Camera2dBundle::default());
+            parent.spawn(Camera2dBundle {
+                camera: Camera {
+                    hdr: true,
+                    ..default()
+                },
+                ..default()
+            });
         });
 }
